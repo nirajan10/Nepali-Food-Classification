@@ -6,16 +6,14 @@ import time
 import urllib
 
 food_list = {
-    'momos' : 100,
-    'dalbhat' : 100,
-    'selroti' : 100
+    'soybean+curry' : 500  # All the list of food to scrap.
     }
 
 for food, n in food_list.items():
     options = webdriver.ChromeOptions()
     options.add_argument('--user-data-dir=C:/Users/Nirajan/AppData/Local/Google/Chrome/User Data/Default')
     driver = uc.Chrome(options=options)
-    driver.minimize_window()
+    driver.maximize_window()
 
     url = str(f'https://www.google.com/search?sca_esv=3cbe9f3cb5d0638a&sxsrf=ACQVn08s6Q6kamb4wJ51lyk25b7qXWtKmQ:1706887592475&q={food}&tbm=isch&source=lnms&sa=X&ved=2ahUKEwjszPvk-4yEAxUZSGwGHWIlDc8Q0pQJegQIEhAB&biw=1536&bih=730&dpr=1.25')
     driver.get(url)
@@ -33,11 +31,14 @@ for food, n in food_list.items():
     for img in img_results:
         image_urls.append(img.get_attribute('src'))
 
-    file_name = food.replace('+', '_')
+    file_name = food.replace('+', ' ')
     folder_path = f'./dataset/{file_name}/'
 
-    for i in range(n):   
-        urllib.request.urlretrieve(str(image_urls[i]), f"{folder_path}{i}.jpg")
+    for i in range(len(image_urls)): 
+        try:
+            urllib.request.urlretrieve(str(image_urls[i]), f"{folder_path}{i}.jpg")
+        except ValueError as e:
+            continue
 
     driver.quit()
     time.sleep(3)
