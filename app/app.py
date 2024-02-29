@@ -1,15 +1,20 @@
 from flask import Flask, request, url_for, redirect, render_template
 import torch
+import pandas as pd
 from torchvision.transforms import transforms
 from torchvision import models
 from PIL import Image
+import os
 
 app = Flask(__name__)
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-model = torch.load("../models/model.pth")
+models_dir = os.path.abspath("models\model.pth")
+model = torch.load(models_dir)
 model.to(device)
+
+df = pd.read_csv('app\\food_description.csv', index_col=[0])
 
 def predict_image(model, image):
     class_names = ['aalu chop', 'bara', 'bhatmas sadeko', 'biryani', 'buff curry', 'chatamari', 'chhoila', 'chhurpi', 'chicken curry', 'chow mein', 'dalbhat', 'dhau(yogurt)', 'dhido', 'gajar ko halwa', 'gundruk', 'jeri(jalebi)', 'kakro ko achar', 'khaja set', 'khapse', 'kheer', 'kodo ko roti', 'kwati', 'laphing', 'lassi', 'momos', 'pani puri', 'phini roti', 'samosa', 'sekuwa', 'selroti', 'sisnu soup', 'sukuti', 'thukpa', 'yomari']
@@ -60,11 +65,15 @@ def predict():
             image = Image.open(image_file)
             image = image.convert('RGB')
             output = predict_image(model, image)
+            pred=f"Food is {output['predicted_class']} with {output['confidence']:.2f} confidence."
+            des=f"{df.loc[output['predicted_class']][0]}"
+            n_pred=f"Food doesn't belong to any category."
+            des2="It could be the result of things like food that isn't from Nepal, food that falls into more than one category, or food that isn't even food."
 
             if output['confidence'] >= 80:
-                return render_template('Image Classification.html', pred=f"Food is {output['predicted_class']} with {output['confidence']:.2f} confidence", image=image)
+                return render_template('Image Classification.html', pred=pred, des=des, image=image)
             else:
-                return render_template('Image Classification.html', pred=f"Food doesn't belong to any category.", image=image)
+                return render_template('Image Classification.html', pred=n_pred, des2=des2, image=image)
     
     # Handle GET request or invalid POST request
     return render_template('Image Classification.html')

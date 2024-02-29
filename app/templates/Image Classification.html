@@ -43,7 +43,12 @@
       <br>
       {% if pred %}
       <h4 align="center"><b>{{ pred }}</b></h4>
-      <br>
+      {% endif %}
+      {% if des %}
+      <h5 align="center"><b>Description: </b>{{ des }}</h5>
+      {% endif %}
+      {% if des2 %}
+      <h5 align="center">{{ des2 }}</h5>
       {% endif %}
 
     </div>
