@@ -67,7 +67,7 @@ def predict():
                 image = Image.open(image_file)
                 image = image.convert('RGB')
                 output = predict_image(model, image)
-                pred = f"Food is {output['predicted_class']} with {output['confidence']:.2f} confidence."
+                pred = f"Food is {output['predicted_class']} with {output['confidence']:.2f}% confidence."
                 des = f"{df.loc[output['predicted_class']][0]}"
                 n_pred = "Food doesn't belong to any category."
                 des2 = "It could be the result of things like food that isn't from Nepal, food that falls into more than one category, or food that isn't even food."
