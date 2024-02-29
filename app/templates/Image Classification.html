@@ -40,6 +40,12 @@
         </form>
       </div>
 
+      {% if image %}
+      <div style="text-align: center;">
+        <img src="data:image/png;base64,{{ image }}" alt="Uploaded Image" style="width: 300px; height: auto;">
+      </div>
+      {% endif %}
+
       <br>
       {% if pred %}
       <h4 align="center"><b>{{ pred }}</b></h4>
@@ -56,6 +62,7 @@
 
     </div>
   </div>
+  <br><br><br><br>
 
   <!--  Scripts-->
   <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>

@@ -3,9 +3,9 @@ import torch
 import pandas as pd
 from torchvision.transforms import transforms
 from torchvision import models
-from PIL import Image
-import os
-from PIL import UnidentifiedImageError
+from PIL import Image, UnidentifiedImageError
+import os, base64
+from io import BytesIO
 
 app = Flask(__name__)
 
@@ -72,10 +72,15 @@ def predict():
                 n_pred = "Food doesn't belong to any category."
                 des2 = "It could be the result of things like food that isn't from Nepal, food that falls into more than one category, or food that isn't even food."
 
+                # Convert PIL image to base64 string for displaying in HTML
+                img_byte_arr = BytesIO()
+                image.save(img_byte_arr, format='PNG')
+                img_byte_arr = base64.b64encode(img_byte_arr.getvalue()).decode('utf-8')
+
                 if output['confidence'] >= 80:
-                    return render_template('Image Classification.html', pred=pred, des=des, image=image)
+                    return render_template('Image Classification.html', pred=pred, des=des, image=img_byte_arr)
                 else:
-                    return render_template('Image Classification.html', pred=n_pred, des2=des2, image=image)
+                    return render_template('Image Classification.html', pred=n_pred, des2=des2, image=img_byte_arr)
             except UnidentifiedImageError:
                 no_image_message = "Please upload a valid image."
                 return render_template('Image Classification.html', no_image=no_image_message)
